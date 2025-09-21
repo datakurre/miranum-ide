@@ -1,3 +1,5 @@
+// split
+import Split from 'split.js'
 // bpmn.js
 import { ImportXMLResult } from "bpmn-js/lib/BaseViewer";
 // css
@@ -65,6 +67,7 @@ window.onload = async function () {
     vscode.postMessage(new GetBpmnFileCommand());
 
     const bpmnFileQuery = await bpmnFileResolver.wait();
+    setupSplit();
     await initializeModeler(bpmnFileQuery?.content, bpmnFileQuery?.engine);
     modelerIsInitialized = true;
 
@@ -74,6 +77,18 @@ window.onload = async function () {
     vscode.postMessage(new GetElementTemplatesCommand());
     vscode.postMessage(new GetBpmnModelerSettingCommand());
 };
+
+function setupSplit() {
+    Split(['#js-canvas', '#js-properties-panel'], {
+        sizes: [70, 30],
+        minSize: 200,
+        gutterSize: 4,
+        cursor: 'col-resize',
+        direction: 'horizontal',
+        snapOffset: 0,
+        dragInterval: 1,
+    });
+}
 
 async function initializeModeler(
     bpmn: string | undefined,
