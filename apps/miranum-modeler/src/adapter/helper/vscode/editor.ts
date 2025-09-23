@@ -8,6 +8,7 @@ import { VsCodeBpmnModelerSettingsAdapter } from "../../out";
  */
 const bpmnModelerWebviewProjectPath = "miranum-modeler-bpmn-webview";
 const dmnModelerWebviewProjectPath = "miranum-modeler-dmn-webview";
+const formWebviewProjectPath = "miranum-form-js-webview";
 
 export function bpmnEditorUi(webview: Webview, extensionUri: Uri): string {
     const baseUri = Uri.joinPath(extensionUri, bpmnModelerWebviewProjectPath);
@@ -73,6 +74,33 @@ export function dmnModelerHtml(webview: Webview, extensionUri: Uri): string {
                     <div class="canvas" id="js-canvas"></div>
                     <div class="properties-panel-parent" id="js-properties-panel"></div>
                 </div>
+                <script type="text/javascript" src="${scriptUri}" nonce="${nonce}"></script>
+            </body>
+            </html>
+        `;
+}
+
+export function formEditorHtml(webview: Webview, extensionUri: Uri): string {
+    const baseUri = Uri.joinPath(extensionUri, formWebviewProjectPath);
+
+    const scriptUri = webview.asWebviewUri(Uri.joinPath(baseUri, "index.js"));
+    const styleUri = webview.asWebviewUri(Uri.joinPath(baseUri, "index.css"));
+
+    const nonce = getNonce();
+
+    return `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+                <link href="${styleUri}" rel="stylesheet" type="text/css" />
+
+                <title>Miranum: Form Editor</title>
+            </head>
+            <body>
+                <div id="app"></div>
                 <script type="text/javascript" src="${scriptUri}" nonce="${nonce}"></script>
             </body>
             </html>

@@ -9,6 +9,7 @@ import {
     VsCodeBpmnEditorAdapter,
     VsCodeDiagramAsSvgCommand,
     VsCodeDmnEditorAdapter,
+    VsCodeFormEditorAdapter,
     VsCodeOpenLoggingConsoleCommand,
     VsCodeToggleTextEditorCommand,
 } from "./adapter/in";
@@ -29,4 +30,5 @@ export function activate(context: ExtensionContext) {
     // 4. Start the application
     container.resolve(VsCodeBpmnEditorAdapter);
     container.resolve(VsCodeDmnEditorAdapter);
+    container.resolve(VsCodeFormEditorAdapter);
 }

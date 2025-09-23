@@ -29,6 +29,9 @@
             ],
             "@miranum-ide/vscode/miranum-vscode-webview": [
                 "libs/vscode/miranum-vscode-webview/src/index.ts"
+            ],
+            "@miranum-ide/miranum-form-js-webview": [
+                "apps/miranum-form-js-webview/src/main.ts"
             ]
         }
     },

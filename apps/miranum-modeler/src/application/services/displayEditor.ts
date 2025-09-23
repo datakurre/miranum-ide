@@ -14,6 +14,7 @@ import {
     DmnUiOutPort,
     DocumentOutPort,
     FileSystemOutPort,
+    FormUiOutPort,
     GetExecutionPlatformVersionOutPort,
     LogMessageOutPort,
 } from "../ports/out";
@@ -199,6 +200,56 @@ export class DisplayDmnModelerUseCase implements DisplayModelerInPort {
         this.logMessageOutPort.error(error as Error);
         this.displayMessageOutPort.error(
             `A problem occurred while trying to display the BPMN Modeler.\n${
+                (error as Error).message ?? error
+            }`,
+        );
+        return false;
+    }
+}
+
+@injectable()
+export class DisplayFormModelerUseCase implements DisplayModelerInPort {
+    constructor(
+        @inject("DocumentOutPort")
+        private readonly documentOutPort: DocumentOutPort,
+        @inject("FormUiOutPort")
+        private readonly formUiOutPort: FormUiOutPort,
+        @inject("DisplayMessageOutPort")
+        protected readonly displayMessageOutPort: DisplayMessageOutPort,
+        @inject("LogMessageOutPort")
+        private readonly logMessageOutPort: LogMessageOutPort,
+    ) {}
+
+    async display(editorId: string): Promise<boolean> {
+        if (editorId !== this.formUiOutPort.getId()) {
+            return this.handleError(
+                new Error("The `editorID` does not match the active editor."),
+            );
+        }
+
+        try {
+            let formFile = this.documentOutPort.getContent();
+
+            if (formFile === "") {
+                formFile = EMPTY_FORM_SCHEMA;
+                await this.documentOutPort.write(formFile);
+                await this.documentOutPort.save();
+            }
+
+            return await this.formUiOutPort.displayFormFile(editorId, formFile);
+        } catch (error) {
+            const msg = (error as Error).message;
+            if (msg === "The active editor is hidden.") {
+                return false;
+            }
+            return this.handleError(error as Error);
+        }
+    }
+
+    private handleError(error: Error): boolean {
+        this.logMessageOutPort.error(error as Error);
+        this.displayMessageOutPort.error(
+            `A problem occurred while trying to display the Form Modeler.\n${
                 (error as Error).message ?? error
             }`,
         );
@@ -589,8 +640,21 @@ const EMPTY_DMN_DIAGRAM = `
     <dmndi:DMNDiagram>
       <dmndi:DMNShape dmnElementRef="Decision_16wqg49">
         <dc:Bounds height="80" width="180" x="160" y="100" />
-      </dmndi:DMNShape>
-    </dmndi:DMNDiagram>
+      </dmndi:DMNDiagram>
   </dmndi:DMNDI>
 </definitions>
+`;
+
+const EMPTY_FORM_SCHEMA = `
+{
+  "schema": {
+    "type": "object",
+    "id": "Form_1",
+    "properties": {}
+  },
+  "exporter": {
+    "name": "FormJS",
+    "version": "1.0.0"
+  }
+}
 `;

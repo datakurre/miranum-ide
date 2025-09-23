@@ -44,3 +44,24 @@ export class LogInfoCommand extends LogMessageCommand {
 export class LogErrorCommand extends LogMessageCommand {
     public override readonly type: string = "LogErrorCommand";
 }
+
+export class GetFileCommand extends Command {
+    constructor() {
+        super("GetFileCommand");
+    }
+}
+
+export class GetFormSchemaCommand extends Command {
+    constructor() {
+        super("GetFormSchemaCommand");
+    }
+}
+
+export class FileQuery extends Query {
+    public readonly content: string;
+
+    constructor(content: string) {
+        super("FileQuery");
+        this.content = content;
+    }
+}

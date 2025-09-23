@@ -6,7 +6,8 @@
   "tags": [],
   "implicitDependencies": [
     "miranum-modeler-bpmn-webview",
-    "miranum-modeler-dmn-webview"
+    "miranum-modeler-dmn-webview",
+    "miranum-form-js-webview"
   ],
   "targets": {
     "observe-all": {
@@ -28,6 +29,11 @@
             "command": "npx nx observe miranum-modeler-dmn-webview",
             "prefix": "miranum-modeler-dmn-webview",
             "color": "yellow"
+          },
+          {
+            "command": "npx nx observe miranum-form-js-webview",
+            "prefix": "miranum-form-js-webview",
+            "color": "magenta"
           }
         ]
       }

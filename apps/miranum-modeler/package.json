@@ -50,6 +50,17 @@
   ],
   "main": "main.js",
   "contributes": {
+    "languages": [
+      {
+        "id": "json",
+        "aliases": [
+          "Miranum Form"
+        ],
+        "extensions": [
+          ".form"
+        ]
+      }
+    ],
     "customEditors": [
       {
         "id": "miranum-modeler.bpmn",
@@ -72,8 +83,22 @@
           }
         ],
         "priority": "default"
+      },
+      {
+        "id": "miranum-modeler.form",
+        "viewType": "miranum-modeler.form",
+        "displayName": "Miragon: Camunda Modeler (Form)",
+        "selector": [
+          {
+            "filenamePattern": "*.form"
+          }
+        ],
+        "priority": "default"
       }
     ],
+    "files.associations": {
+      "*.form": "json"
+    },
     "commands": [
       {
         "command": "miranum-modeler.toggleTextEditor",
@@ -124,7 +149,7 @@
         {
           "command": "miranum-modeler.toggleTextEditor",
           "group": "navigation",
-          "when": "activeWebviewPanelId == 'miranum-modeler.bpmn' || activeWebviewPanelId == 'miranum-modeler.dmn'"
+          "when": "activeWebviewPanelId == 'miranum-modeler.bpmn' || activeWebviewPanelId == 'miranum-modeler.dmn' || activeWebviewPanelId == 'miranum-modeler.form'"
         }
       ]
     },

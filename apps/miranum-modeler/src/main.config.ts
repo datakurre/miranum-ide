@@ -2,6 +2,7 @@ import { container, Lifecycle } from "tsyringe";
 import {
     DisplayBpmnModelerUseCase,
     DisplayDmnModelerUseCase,
+    DisplayFormModelerUseCase,
     DisplayMessageUseCase,
     GetDiagramAsSvgUseCase,
     GetDocumentUseCase,
@@ -21,6 +22,7 @@ import {
     VsCodeDisplayMessageAdapter,
     VsCodeDmnWebviewAdapter,
     VsCodeDocumentAdapter,
+    VsCodeFormWebviewAdapter,
     VsCodeLoggerAdapter,
     VsCodeQuickPickAdapter,
     VsCodeReadAdapter,
@@ -100,6 +102,7 @@ export function config(): void {
 
     configBpmnModeler();
     configDmnModeler();
+    configFormModeler();
 }
 
 function configBpmnModeler(): void {
@@ -154,6 +157,21 @@ function configDmnModeler(): void {
 
     // Use Cases
     container.register("DisplayDmnModelerInPort", DisplayDmnModelerUseCase, {
+        lifecycle: Lifecycle.Singleton,
+    });
+}
+
+function configFormModeler(): void {
+    // Primitives
+    container.register("FormModelerViewType", { useValue: "miranum-modeler.form" });
+
+    // Out Adapter
+    container.register("FormUiOutPort", VsCodeFormWebviewAdapter, {
+        lifecycle: Lifecycle.Singleton,
+    });
+
+    // Use Cases
+    container.register("DisplayFormModelerInPort", DisplayFormModelerUseCase, {
         lifecycle: Lifecycle.Singleton,
     });
 }

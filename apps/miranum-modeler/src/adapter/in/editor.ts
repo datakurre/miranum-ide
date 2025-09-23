@@ -267,3 +267,82 @@ export class VsCodeDmnEditorAdapter
         });
     }
 }
+
+@singleton()
+export class VsCodeFormEditorAdapter
+    extends VsCodeCustomEditor
+    implements CustomTextEditorProvider
+{
+    protected extension = "form";
+
+    constructor(
+        @inject("FormModelerViewType")
+        private readonly viewType: string,
+        @inject("DisplayFormModelerInPort")
+        protected readonly displayModelerInPort: DisplayModelerInPort,
+        @inject("SyncDocumentInPort")
+        private readonly syncDocumentInPort: SyncDocumentInPort,
+        @inject("GetDocumentInPort")
+        protected readonly getDocumentUseCase: GetDocumentInPort,
+        @inject("LogMessageInPort")
+        private readonly logMessageInPort: LogMessageInPort,
+    ) {
+        super();
+        const formModeler = window.registerCustomEditorProvider(
+            container.resolve("FormModelerViewType"),
+            this,
+        );
+
+        getContext().subscriptions.push(formModeler);
+    }
+
+    resolveCustomTextEditor(
+        document: TextDocument,
+        webviewPanel: WebviewPanel,
+        token: CancellationToken,
+    ): void | Thenable<void> {
+        try {
+            const editorId = document.uri.path;
+            createEditor(this.viewType, editorId, webviewPanel, document);
+
+            this.subscribeToMessageEvent();
+            this.subscribeToDocumentChangeEvent();
+            this.subscribeToTabChangeEvent();
+            this.subscribeToDisposeEvent();
+        } catch (error) {
+            this.logMessageInPort.error(error as Error);
+        }
+    }
+
+    protected subscribeToMessageEvent() {
+        subscribeToMessageEvent(async (message: Command, editorId: string) => {
+            console.debug(
+                `[${new Date(Date.now()).toJSON()}] Message received -> ${message.type}`,
+            );
+            switch (message.type) {
+                case "GetFormSchemaCommand": {
+                    if (await this.displayModelerInPort.display(editorId)) {
+                        this.logMessageInPort.info("Form modeler is ready");
+                    }
+                    break;
+                }
+                case "SyncDocumentCommand": {
+                    this.isChangeDocumentEventBlocked = true;
+                    console.debug("SyncDocumentCommand -> blocked");
+                    await this.syncDocumentInPort.sync(
+                        editorId,
+                        (message as SyncDocumentCommand).content,
+                    );
+                    this.isChangeDocumentEventBlocked = false;
+                    console.debug("SyncDocumentCommand -> released");
+                    break;
+                }
+            }
+            console.debug(
+                `[${new Date(Date.now()).toJSON()}] Message processed -> ${
+                    message.type
+                }`,
+            );
+        });
+    }
+}

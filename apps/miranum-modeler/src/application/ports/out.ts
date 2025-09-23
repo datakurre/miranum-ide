@@ -70,6 +70,17 @@ export interface DmnUiOutPort extends EditorComponent {
     displayDmnFile(editorId: string, dmnFile: string): Promise<boolean>;
 }
 
+export interface FormUiOutPort extends EditorComponent {
+    /**
+     * Sends the Form file to the active webview.
+     * @param editorId
+     * @param formFile
+     * @returns {Promise<boolean>} true if the message was sent successfully
+     * @throws {Error} if the editorId does not match the active editor
+     */
+    displayFormFile(editorId: string, formFile: string): Promise<boolean>;
+}
+
 export interface DocumentOutPort extends EditorComponent {
     /**
      * Get the content of the document.

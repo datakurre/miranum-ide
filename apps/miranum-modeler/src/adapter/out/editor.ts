@@ -18,16 +18,18 @@ import {
     Command,
     DmnFileQuery,
     ElementTemplatesQuery,
+    FileQuery,
     FormKeysQuery,
     GetDiagramAsSVGCommand,
     Query,
 } from "@miranum-ide/vscode/miranum-vscode-webview";
 
-import { bpmnEditorUi, dmnModelerHtml } from "../helper/vscode";
+import { bpmnEditorUi, dmnModelerHtml, formEditorHtml } from "../helper/vscode";
 import {
     BpmnUiOutPort,
     DmnUiOutPort,
     DocumentOutPort,
+    FormUiOutPort,
 } from "../../application/ports/out";
 import { BpmnModelerSetting } from "../../application/domain/model";
 
@@ -69,6 +71,8 @@ export function createWebview(
         webview.html = bpmnEditorUi(webview, getContext().extensionUri);
     } else if (viewType === container.resolve("DmnModelerViewType")) {
         webview.html = dmnModelerHtml(webview, getContext().extensionUri);
+    } else if (viewType === container.resolve("FormModelerViewType")) {
+        webview.html = formEditorHtml(webview, getContext().extensionUri);
     } else {
         throw new Error(`Unsupported file extension: ${viewType}`);
     }
@@ -202,6 +206,17 @@ export class VsCodeDmnWebviewAdapter implements DmnUiOutPort {
     async displayDmnFile(editorId: string, dmnFile: string): Promise<boolean> {
         const dmnFileQuery = new DmnFileQuery(dmnFile);
         return postMessage(editorId, dmnFileQuery);
+    }
+}
+
+export class VsCodeFormWebviewAdapter implements FormUiOutPort {
+    getId(): string {
+        return getActiveEditor().id;
+    }
+
+    async displayFormFile(editorId: string, formFile: string): Promise<boolean> {
+        const formFileQuery = new FileQuery(formFile);
+        return postMessage(editorId, formFileQuery);
     }
 }
 

@@ -1,0 +1,81 @@
+{
+  "name": "miranum-form-js-webview",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/miranum-form-js-webview/src",
+  "tags": [],
+  "targets": {
+    "observe": {
+      "executor": "@nx/vite:build",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "defaultConfiguration": "development",
+      "options": {
+        "watch": true,
+        "outputPath": "dist/apps/miranum-modeler/miranum-form-js-webview",
+        "configFile": "apps/miranum-form-js-webview/vite.config.mts",
+        "emptyOutDir": false
+      },
+      "configurations": {
+        "development": {
+          "extractLicenses": false,
+          "optimization": false,
+          "sourceMap": false,
+          "vendorChunk": true
+        }
+      }
+    },
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/miranum-modeler/miranum-form-js-webview",
+        "configFile": "apps/miranum-form-js-webview/vite.config.mts"
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "options": {
+        "jestConfig": "apps/miranum-form-js-webview/jest.config.ts",
+        "passWithNoTests": true,
+        "coverageReporters": [
+          "clover"
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "apps/miranum-form-js-webview/**/*.ts"
+        ]
+      }
+    },
+    "serve": {
+      "executor": "@nx/vite:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "miranum-form-js-webview:build",
+        "mode": "development"
+      }
+    }
+  }
+}
